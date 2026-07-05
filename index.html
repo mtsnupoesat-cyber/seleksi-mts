@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pengumuman Hasil Tes Masuk</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital@1&family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+
+  <style>
+    :root { --hijau-nu: #168445; --emas-buntet: #D4AF37; --hijau-gelap: #0d522b; }
+    body { font-family: 'Roboto', sans-serif; background-color: #f4f6f4; color: #333; padding: 0; margin: 0; }
+    .arabic-text { font-family: 'Amiri', serif; font-size: 2rem; color: var(--emas-buntet); text-shadow: 1px 1px 2px rgba(0,0,0,0.3); }
+    .header-panel { background: linear-gradient(135deg, var(--hijau-gelap) 0%, var(--hijau-nu) 100%); color: white; border-bottom: 5px solid var(--emas-buntet); border-radius: 0 0 25px 25px; box-shadow: 0 4px 15px rgba(0,0,0,0.15); margin-bottom: 30px; }
+    .sub-title-2 { letter-spacing: 2px; font-weight: 700; color: var(--emas-buntet); }
+    .card-search { border: 1px solid rgba(22, 132, 69, 0.2); border-top: 5px solid var(--hijau-nu); border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); background-color: #ffffff; }
+    .btn-nu { background-color: var(--hijau-nu); color: white; font-weight: 600; border: none; transition: all 0.3s ease; }
+    .btn-nu:hover { background-color: var(--hijau-gelap); color: var(--emas-buntet); }
+    .btn-daftar-ulang { background-color: var(--emas-buntet); color: #212529; font-weight: 700; border: none; box-shadow: 0 4px 10px rgba(212, 175, 55, 0.3); }
+    .btn-daftar-ulang:hover { background-color: #bfa030; color: #000; }
+    .footer-text { font-size: 0.85rem; color: #666; margin-top: 40px; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header-panel text-center py-4">
+    <div class="container">
+      <div class="arabic-text mb-2">بِسْمِ اللَّهِ الرَّحْمَٰنِ الرَّحِيمِ</div>
+      <h1 class="h3 fw-bold mb-1 text-white">PENGUMUMAN HASIL TES MASUK</h1>
+      <h2 class="h4 fw-normal mb-1 text-white">SPMB MTs NU PUTRA 1</h2>
+      <h3 class="h5 sub-title-2 mb-2">BUNTET PESANTREN</h3>
+      <p class="mb-0 text-white-50 small">TAHUN AJARAN 2026/2027</p>
+    </div>
+  </div>
+
+  <!-- KONTEN -->
+  <div class="container mb-5">
+    <div class="row justify-content-center">
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="card card-search p-4 mb-4">
+          <h5 class="card-title text-center mb-4 fw-bold text-success">Cek Status Kelulusan</h5>
+          <form id="formCari" onsubmit="prosesPencarian(event)">
+            <div class="mb-3">
+              <label for="noPendaftaran" class="form-label small fw-bold text-secondary">Nomor Pendaftaran Siswa</label>
+              <input type="text" class="form-control form-control-lg" id="noPendaftaran" placeholder="Contoh: Mts-2026001" required>
+            </div>
+            <button type="submit" id="btnSubmit" class="btn btn-nu w-100 btn-lg py-2 mt-2">
+              <span id="btnText">PERIKSA HASIL</span>
+              <span id="btnLoading" class="spinner-border spinner-border-sm d-none" role="status"></span>
+            </button>
+          </form>
+        </div>
+        <div id="areaHasil"></div>
+      </div>
+    </div>
+    <div class="text-center footer-text">&copy; 2026 MTs NU PUTRA 1 Buntet Pesantren. All Rights Reserved.</div>
+  </div>
+
+  <!-- MODAL DAFTAR ULANG -->
+  <div class="modal fade" id="modalDaftarUlang" data-bs-backdrop="static" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header bg-success text-white">
+          <h5 class="modal-title fw-bold text-white">Form Isian Daftar Ulang</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+        </div>
+        <div class="modal-body">
+          <form id="formDaftarUlang" onsubmit="bukaGoogleForm(event)">
+            <input type="hidden" id="modalNamaSiswa">
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-secondary">Nama Siswa</label>
+              <input type="text" id="displayNamaSiswa" class="form-control bg-light" readonly disabled>
+            </div>
+            <div class="mb-3">
+              <label class="form-label fw-bold small text-secondary">Status Keberadaan</label>
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="radio" name="radioStatus" id="statusMondok" value="mondok" checked>
+                <label class="form-check-label" for="statusMondok">Mondok (Menetap di Pesantren)</label>
+              </div>
+              <div class="form-check">
+                <input class="form-check-input" type="radio" name="radioStatus" id="statusMukim" value="mukim">
+                <label class="form-check-label" for="statusMukim">Mukim (Laju / Pulang Pergi)</label>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="noWa" class="form-label fw-bold small text-secondary">No. WhatsApp Orang Tua/Wali</label>
+              <input type="text" class="form-control" id="noWa" placeholder="Contoh: 628123456789" required>
+              <div class="form-text text-danger fw-bold mt-2" id="errorWa" style="display:none;">⚠️ Format salah! Harus diawali 628 dan minimal 11 angka.</div>
+            </div>
+            <button type="submit" class="btn btn-nu w-100 fw-bold py-2 mt-3">LANJUT KE GOOGLE FORM</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+  <script>
+    // =========================================================================
+    // ⚠️ MASUKKAN URL WEB APP GOOGLE SCRIPT (/exec) ANDA DI SINI
+    // =========================================================================
+    const urlWebAPI = "https://script.google.com/macros/s/AKfycbwn7nqLBeRD0gSOU3EYzoI6pIxNQdo3iIlsg6y5ruO5QQHg8TQQrAQL6z9IJOLm_RnImg/exec;
+
+    let globalNamaSiswa = "";
+
+    function prosesPencarian(e) {
+      e.preventDefault();
+      const noPendaftaran = document.getElementById("noPendaftaran").value;
+      const btnSubmit = document.getElementById("btnSubmit");
+      const btnText = document.getElementById("btnText");
+      const btnLoading = document.getElementById("btnLoading");
+      const areaHasil = document.getElementById("areaHasil");
+
+      btnSubmit.disabled = true;
+      btnText.innerText = "Memeriksa Data... ";
+      btnLoading.classList.remove("d-none");
+      areaHasil.innerHTML = "";
+
+      // Mengambil data dari API Google Script menggunakan metode Fetch murni (Bebas Iframe & Login)
+      fetch(`${urlWebAPI}?noPendaftaran=${encodeURIComponent(noPendaftaran)}`)
+        .then(res => res.json())
+        .then(respons => {
+          btnSubmit.disabled = false;
+          btnText.innerText = "PERIKSA HASIL";
+          btnLoading.classList.add("d-none");
+
+          if (respons.status === "error") {
+            tampilkanPesan("danger", "Eror!", respons.pesan);
+            return;
+          }
+          if (!respons.ditemukan) {
+            tampilkanPesan("warning", "Data Tidak Ditemukan", "Nomor pendaftaran tidak terdaftar.");
+            return;
+          }
+
+          globalNamaSiswa = respons.namaSiswa;
+          
+          if (respons.statusKelulusan === "LULUS") {
+            areaHasil.innerHTML = `
+              <div class="alert alert-success p-4 shadow-sm">
+                <h4 class="alert-heading fw-bold text-success">🎉 Selamat! Anda Dinyatakan LULUS</h4>
+                <hr>
+                <p>Nama Siswa: <strong>${respons.namaSiswa}</strong></p>
+                <button type="button" class="btn btn-daftar-ulang w-100 py-2" onclick="bukaModalDaftarUlang()">LAKUKAN DAFTAR ULANG</button>
+              </div>`;
+          } else {
+            areaHasil.innerHTML = `
+              <div class="alert alert-danger p-4 shadow-sm">
+                <h4 class="alert-heading fw-bold text-danger">Terima Kasih Telah Mengikuti Seleksi</h4>
+                <hr>
+                <p>Nama Siswa: ${respons.namaSiswa} (${respons.statusKelulusan})</p>
+                <p class="small text-secondary" style="font-style: italic;">"Tetap semangat dan jangan berkecil hati. Semoga sukses di kesempatan berikutnya."</p>
+              </div>`;
+          }
+        })
+        .catch(err => {
+          btnSubmit.disabled = false;
+          btnText.innerText = "PERIKSA HASIL";
+          btnLoading.classList.add("d-none");
+          tampilkanPesan("danger", "Koneksi Gagal", "Gagal menghubungi server database.");
+        });
+    }
+
+    function tampilkanPesan(tipe, judul, pesan) {
+      document.getElementById("areaHasil").innerHTML = `<div class="alert alert-${tipe} shadow-sm"><strong>${judul}</strong> ${pesan}</div>`;
+    }
+
+    function bukaModalDaftarUlang() {
+      document.getElementById("modalNamaSiswa").value = globalNamaSiswa;
+      document.getElementById("displayNamaSiswa").value = globalNamaSiswa;
+      new bootstrap.Modal(document.getElementById('modalDaftarUlang')).show();
+    }
+
+    function bukaGoogleForm(e) {
+      e.preventDefault();
+      const nama = document.getElementById("modalNamaSiswa").value;
+      const status = document.querySelector('input[name="radioStatus"]:checked').value;
+      const noWa = document.getElementById("noWa").value.trim();
+      
+      if (!/^628\d{8,}$/.test(noWa)) {
+        document.getElementById("errorWa").style.display = "block";
+        return;
+      }
+
+      // EDIT PRE-FILLED LINK GOOGLE FORM ANDA DI SINI
+      const baseUrl = "https://forms.gle/c2pigcAr8QREuPpPA"; 
+      const entryNamaSiswa = "entry.1191326741=tes"; 
+      const entryStatus    = "entry.1174076718=TIDAK+MONDOK"; 
+      const entryNoWa      = "entry.215590900=081546555506"; 
+
+      window.open(`${baseUrl}?${entryNamaSiswa}=${encodeURIComponent(nama)}&${entryStatus}=${encodeURIComponent(status)}&${entryNoWa}=${encodeURIComponent(noWa)}`, '_blank');
+    }
+  </script>
+</body>
+</html>
